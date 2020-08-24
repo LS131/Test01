@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thyleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>demo01页面</title>
+</head>
+<script th:src="@{/axios.min.js}"></script>
+<script th:src="@{/vue.min.js}"></script>
+<body>
+<div id="app">
+    <button @click="m1()">点击</button>
+    <button @click="m2()">获取token</button>
+    <button @click="m3()">再次</button>
+</div>
+<script>
+    let app = new Vue({
+        el:'#app',
+        data:function () {
+            return {
+
+            };
+        },
+        methods:{
+            m1:function () {
+                axios.post("/user/login",{name:"小明",password:"123"}).then(function (response) {
+                    let res = response.data;
+                    console.log(res.token);
+                    window.sessionStorage.setItem("token",res.token);
+                }).catch(function (error) {
+                    console.log("请求失败"+error)
+                });
+            },
+            m2:function () {
+                console.log(window.sessionStorage.getItem("token"));
+            },
+            m3:function () {
+                axios.defaults.headers.post['token'] = window.sessionStorage.getItem("token");
+                axios.post("/user/test").then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                }).catch(function (error) {
+                    console.log("请求失败"+error)
+                });
+            }
+        }
+
+    });
+</script>
+
+</body>
+</html>
